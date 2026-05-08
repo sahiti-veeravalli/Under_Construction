@@ -32,18 +32,13 @@ const Navbar = () => {
         <div className="relative">
           <motion.a
             href="#"
-            className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-primary/20 bg-background/80 backdrop-blur-sm shadow-[0_8px_24px_hsl(82_85%_55%/0.12)] overflow-hidden"
+            className="text-2xl font-bold text-gradient-primary"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onHoverStart={() => setShowName(true)}
             onHoverEnd={() => setShowName(false)}
-            aria-label="Go to top"
           >
-            <img
-              src="/logo.png"
-              alt="Sahiti Veeravalli logo"
-              className="w-full h-full object-contain p-1.5"
-            />
+            SV.
           </motion.a>
 
           <AnimatePresence>
