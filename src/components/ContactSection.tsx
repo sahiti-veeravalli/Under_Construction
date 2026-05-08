@@ -1,5 +1,6 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 const SocialIcon = ({ label, href, icon, tooltip }: { label: string; href: string; icon: React.ReactNode; tooltip?: string }) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -34,10 +35,29 @@ const ContactSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = `mailto:sahithi.veeravalli19@gmail.com?subject=Message from ${formData.name}&body=${formData.message}%0A%0AFrom: ${formData.email}`;
+    setIsSending(true);
+
+    const subject = encodeURIComponent(`Message from ${formData.name}`);
+    const body = encodeURIComponent(`${formData.message}\n\nFrom: ${formData.name} (${formData.email})`);
+    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=sahithi.veeravalli19@gmail.com&su=${subject}&body=${body}`;
+
+    const composeWindow = window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
+    if (!composeWindow) {
+      toast.error("Could not open Gmail", {
+        description: "Please allow pop-ups and try again.",
+      });
+    } else {
+      toast.success("Opening Gmail compose", {
+        description: "Your message draft is ready.",
+      });
+      setFormData({ name: "", email: "", message: "" });
+    }
+
+    setIsSending(false);
   };
 
   return (
@@ -135,10 +155,11 @@ const ContactSection = () => {
             </div>
             <motion.button
               type="submit"
+              disabled={isSending}
               className="w-full px-8 py-5 bg-primary text-primary-foreground rounded-xl font-semibold text-lg glow-primary flex items-center justify-center gap-3"
               whileHover={{ scale: 1.02, boxShadow: "0 0 40px -5px hsl(82 85% 55% / 0.5)" }}
               whileTap={{ scale: 0.98 }}>
-              Send Message
+              {isSending ? "Opening..." : "Send Message"}
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>
